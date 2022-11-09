@@ -1,26 +1,54 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../store/appContext";
 import rigoImageUrl from "../../img/rigo-baby.jpg";
+import { Card } from "../component/Card.jsx";
 import "../../styles/home.css";
 
 export const Home = () => {
-	const { store, actions } = useContext(Context);
+  const { store, actions } = useContext(Context);
+  let count_characters = 0;
+  let count_planets = 0;
+  let img = "";
 
-	return (
-		<div className="text-center mt-5">
-			<h1>Hello Rigo!!</h1>
-			<p>
-				<img src={rigoImageUrl} />
-			</p>
-			<div className="alert alert-info">
-				{store.message || "Loading message from the backend (make sure your python backend is running)..."}
-			</div>
-			<p>
-				This boilerplate comes with lots of documentation:{" "}
-				<a href="https://github.com/4GeeksAcademy/react-flask-hello/tree/95e0540bd1422249c3004f149825285118594325/docs">
-					Read documentation
-				</a>
-			</p>
-		</div>
-	);
+  useEffect(() => {
+    actions.getCharacters();
+    actions.getPlanets();
+  }, []);
+
+  return (
+    <div className="container">
+      <div>
+        <h1 className="title">Characters</h1>
+      </div>
+      <div className="d-flex flex-row char-container">
+        {
+          store.characters.length <= 0 ? <div>Loading...</div> :
+            <> {store.characters.map((character, index) => {
+              count_characters = count_characters + 1;
+              let name_characters = "people"
+              img = `https://starwars-visualguide.com/assets/img/characters/${count_characters}.jpg`
+              return <Card item={character} key={index} picture={img} id={count_characters} type={name_characters} />;
+            })}
+            </>
+        }
+      </div>
+
+      <div>
+        <h1 className="title">Planets</h1>
+      </div>
+      <div className="d-flex flex-row char-container">
+        {store.planets.length <= 0 ? <div>Loading...</div> :
+          <>
+            {store.planets.map((planet, index) => {
+              count_planets = count_planets + 1;
+              let name_planets = "planets"
+              img = `https://starwars-visualguide.com/assets/img/planets/${count_planets}.jpg`
+              return <Card item={planet} key={`${index}a`} picture={img} id={count_planets} type={name_planets} />;
+            })}
+          </>
+        }
+
+      </div>
+    </div>
+  );
 };
